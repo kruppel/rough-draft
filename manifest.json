@@ -1,0 +1,10 @@
+{
+  "name": "Rough Draft",
+  "description": "Prototyping from an extension",
+  "version": "1.0",
+  "content_scripts": [{
+    "matches": [ "*://*/*" ],
+    "js": ["loader.js"]
+  }],
+  "manifest_version": 2
+}
