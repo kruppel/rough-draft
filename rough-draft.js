@@ -10,6 +10,7 @@
   var tray;
   var button;
   var prevTransform;
+  var position;
 
   body.style.transition = 'transform 250ms ease';
 
@@ -19,7 +20,41 @@
   ).body.firstChild;
   button = tray.querySelector('button');
 
-  function toggle() {
+  function onMouseDown(e) {
+    position = { x: e.x, y: e.y };
+
+    document.addEventListener('mousemove', onMouseMove, false);
+    document.addEventListener('mouseout', onMouseOut, false);
+    document.addEventListener('mouseup', onMouseUp, false);
+  }
+
+  function onMouseMove(e) {
+    button.style.top = Math.min(body.clientHeight, e.clientY) + 'px';
+    button.style.left = Math.max(e.clientX - body.clientWidth, -100) - 80 + 'px';
+    console.log(e.clientX - body.clientWidth);
+  }
+
+  function onMouseOut(e) {
+    var from = e.relatedTarget || e.toElement;
+
+    if (from && from.nodeName !== 'HTML') { return; }
+
+    position = null;
+    document.removeEventListener('mousemove', onMouseMove, false);
+    document.removeEventListener('mouseout', onMouseOut, false);
+    document.removeEventListener('mouseup', onMouseUp, false);
+  }
+
+  function onMouseUp(e) {
+    var p = position;
+
+    position = null;
+    document.removeEventListener('mousemove', onMouseMove, false);
+    document.removeEventListener('mouseout', onMouseOut, false);
+    document.removeEventListener('mouseup', onMouseUp, false);
+
+    if (p.x !== e.x || p.y !== e.y) { return; }
+
     if (tray.classList.contains('tray--open')) {
       tray.classList.remove('tray--open');
       body.style.transform = prevTransform;
@@ -30,6 +65,6 @@
     }
   }
 
-  button.addEventListener('click', toggle, false);
+  button.addEventListener('mousedown', onMouseDown, false);
   body.appendChild(tray);
 }());
